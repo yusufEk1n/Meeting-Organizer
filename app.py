@@ -1,10 +1,12 @@
-from flask import Flask
+from flask import Flask, render_template, request, redirect, url_for, flash
 import create_table as ct
 import sqlite3
+import os
 
 app = Flask(__name__)
 
-#ilk olarak database.db dosyasını oluşturuyoruz
+app.static_folder = os.path.abspath(path="templates/static/")
+
 ct.create_table()
 
 @app.route("/", methods=["GET"])
@@ -13,8 +15,8 @@ def index():
         cursor = database.cursor()
         cursor.execute("SELECT * FROM Meetings")
         meetings = cursor.fetchall()
-        return str(meetings)
         
+    return render_template("layouts/index.html")
 
 
 if __name__ == "__main__":
