@@ -1,6 +1,135 @@
 {% extends "layouts/base.html" %}
-{% block content %}
 
 {% include "layouts/header.html" %}
+
+{% block content %}
+
+<!-- Page -->
+<div style="width: 70%; margin-left: auto; margin-right: auto; border: 1px solid #ccc; padding: 20px 20px 0 20px">
+
+    <!-- List -->
+    <div class="list">
+
+        <div style="width: 100%; height: 50px; display: flex; flex-direction: column; justify-content: center;">
+            <h2>Toplantılar
+                <button type="button" id="myBtn" style="float: right;">Yeni Toplantı Ekle</button>
+            </h2>
+        </div>
+
+        <!-- Table -->
+        <table style="width: 100%; margin-top: 1em;" cellspacing="0" border="1">
+
+
+            <tr style="height: 40px; background-color: #FDDF95;">
+                <th>Konu</th>
+                <th>Tarih</th>
+                <th>Başlangıç Saati</th>
+                <th>Bitiş Saati</th>
+                <th>Katılımcılar</th>
+                <th>İşlem</th>
+            </tr>
+
+            {% for row in meetings %}
+            <tr style="text-align: center; height: 30px;">
+                <td>{{row.1}}</td>
+                <td>
+                    <!-- "-" karakterine göre böl dd.mm.yyyy -->
+                    {% set date = row.2.split('-') %}
+                    {{ date[2] }}.{{ date[1] }}.{{ date[0] }}
+                </td>
+                <td>{{row.3}}</td>
+                <td>{{row.4}}</td>
+                <td>{{row.5}}</td>
+                <td>
+                    <a href="#" class="btnEdit" data-id="{{row.0}}">Düzenle</a>
+                    <a href="/delete/{{ row.0 }}" onclick="return confirm('Bu toplantıyı silmek istediğinizden emin misiniz?')">Sil</a>
+                </td>
+            </tr>
+
+            <!-- The Modal -->
+            <div id="edit{{row.0}}" class="modal">
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <span class="closeEdit" data-id="{{row.0}}">&times;</span>
+                    <h3>Toplantı Düzenle</h3>
+                    <hr>
+                    <!-- Form -->
+                    <form action="{{ url_for('update', id=row.0) }}" method="POST">
+                        <div class="form-group">
+                            <label for="subject">Konu:</label>
+                            <input type="hidden" name="id" id="id" value="{{row.0}}">
+                            <input type="text" name="subject" id="subject" class="form-control" value="{{row.1}}"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="date">Tarih:</label>
+                            <input type="date" name="date" id="date" class="form-control" value="{{row.2}}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="start_time">Başlangıç Saati:</label>
+                            <input type="time" name="start_time" id="start_time" class="form-control" value="{{row.3}}"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="end_time">Bitiş Saati:</label>
+                            <input type="time" name="end_time" id="end_time" class="form-control" value="{{row.4}}"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="participants">Katılımcılar:</label></td>
+                            <textarea name="participants" id="participants" class="form-control"
+                                required>{% for participant in row.5.split(',') %}{{participant.strip()}}&#13;&#10;{% endfor %}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Güncelle">
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {% endfor %}
+
+        </table>
+
+    </div>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Toplantı Ekle</h2>
+                <hr>
+                <!-- Form -->
+                <form action="{{ url_for('insert') }}" method="POST" style="margin-top: 1.5em;">
+                    <div class="form-group">
+                        <label for="subject">Konu:</label>
+                        <input type="text" name="subject" id="subject" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Tarih:</label>
+                        <input type="date" name="date" id="date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="start_time">Başlangıç Saati:</label>
+                        <input type="time" name="start_time" id="start_time" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="end_time">Bitiş Saati:</label>
+                        <input type="time" name="end_time" id="end_time" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="participants">Katılımcılar:</label></td>
+                        <textarea name="participants" id="participants" class="form-control" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Kaydet" class="btn btn-primary">
+                    </div>
+                </form>
+        </div>
+    </div>
+
+    {% include "layouts/footer.html" %}
+</div>
 
 {% endblock %}
