@@ -137,7 +137,7 @@ ui-tests/.yarn/*
 ui-tests/.pnp.*
 
 .vscode
-.venv 
+venv 
 node_modules
 
 *.db
